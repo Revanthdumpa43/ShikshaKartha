@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Shiksha Kartha</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to Shiksha Kartha Dashboard</h1>
+    <p>Manage your courses and videos.</p>
+    
+    <div id="user-info"></div>
+
+    <h2>Upload Video</h2>
+    <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+        <label for="course-name">Course Name:</label>
+        <input type="text" id="course-name" name="course-name" required>
+        <input type="file" name="video" accept="video/mp4" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    <p id="upload-message"></p> <!-- Area to show upload messages -->
+    
+    <!-- Firebase App (Core SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <!-- Firebase Authentication -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+    <script>
+        // Store logged-in user's info
+        let userEmail = '';
+
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('user-info').textContent = `Logged in as: ${user.email}`;
+                userEmail = user.email;
+            } else {
+                window.location.href = '/'; // Redirect to login if not authenticated
+            }
+        });
+
+        // Handle video upload
+        document.getElementById('upload-form').onsubmit = async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const courseName = document.getElementById('course-name').value;
+            const videoFile = document.querySelector('input[type="file"]').files[0];
+
+            // Create the JSON structure for course data
+            const courseData = {
+                "Course name": courseName,
+                "Course Author": userEmail,
+                "Video list": [videoFile.name] // Start with the uploaded video name
+            };
+
+            const formData = new FormData();
+            formData.append("video", videoFile);
+            formData.append("courseData", JSON.stringify(courseData)); // Send JSON data as a string
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('upload-message').textContent = result.message; // Show upload status
+        };
+    </script>
+</body>
+</html>

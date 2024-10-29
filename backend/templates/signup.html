@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - Shiksha Kartha</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Signup</h1>
+    <form id="signup-form">
+        <input type="email" id="signup-email" placeholder="Enter Email" required>
+        <input type="password" id="signup-password" placeholder="Enter Password" required>
+        <button type="submit">Signup</button>
+    </form>
+    <p id="signup-error" style="color:red;"></p>
+
+    <p>Already have an account? <a href="/">Login here</a></p> <!-- Link to Login -->
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="{{ url_for('static', filename='auth.js') }}"></script>
+</body>
+</html>
